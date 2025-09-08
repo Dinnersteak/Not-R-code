@@ -1,0 +1,32 @@
+use plotters::prelude::*;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let root = BitMapBackend::new("shapes.png", (600, 600)).into_drawing_area();
+    root.fill(&WHITE)?;
+
+    let mut chart = ChartBuilder::on(&root)
+        .margin(10)
+        .build_cartesian_2d(-10.0..10.0, -10.0..10.0)?;
+
+    chart.configure_mesh().disable_mesh().draw()?;
+
+    chart.draw_series([Circle::new((5.0, -5.0), 60, &BLACK)])?;
+    chart.draw_series([Circle::new((-5.0, -5.0), 60, &BLACK)])?;
+
+    chart.draw_series([Polygon::new(
+        vec![(-3.0, -7.0), (3.0, -7.0), (3.0, 6.0), (-3.0, 6.0)],
+        &BLACK,
+    )])?;
+
+    let points: Vec<_> = (0..100)
+        .map(|i| {
+            let t = std::f64::consts::PI * i as f64 / 99.0;
+            (3.0 * t.cos(), 6.0 + 3.0 * t.sin())
+        })
+        .collect();
+
+    chart.draw_series(LineSeries::new(points, &BLACK))?;
+
+    Ok(())
+}
+
